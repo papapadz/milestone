@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,7 +20,7 @@ class DatabaseSeeder extends Seeder
             [
                 'firstname' => 'System',
                 'lastname'  => 'Admin',
-                'verified_at' => Carbon\Carbon::now()->toDateTimeString(),
+                'email_verified_at' => Carbon::now()->toDateTimeString(),
                 'email'     => 'admin@email.com',
                 'password'  => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 'role'      => 'admin',
