@@ -44,15 +44,21 @@
                                 <label for="rice">Rice quantity</label>
                                 <div class="row">
                                     <div class="col">
-                                        <input type="text" class="form-control" name="riceQty">
+                                        <input type="number" class="form-control @error('riceQty') is-invalid @enderror" name="riceQty">
+                                        @error('riceQty')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="col">
-                                        <select class="form-control company-dropdown" name="riceUnit" id="exampleFormControlSelect1">
+                                        <select class="form-control company-dropdown @error('riceUnit') is-invalid @enderror" name="riceUnit" id="exampleFormControlSelect1">
                                             <option disabled>--Select Unit--</option>
                                             <option {{isset($product) && $product->unit == 'kilogram' ? 'selected' : '' }} value="kilogram">kilogram</option>
                                             <option {{isset($product) && $product->unit == 'sacks' ? 'selected' : '' }} value="sacks">sacks</option>
                                             <option {{isset($product) && $product->unit == 'tons' ? 'selected' : '' }} value="tons">tons</option>
                                         </select>
+                                        @error('riceUnit')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -60,15 +66,21 @@
                                 <label for="rice">Darak quantity</label>
                                 <div class="row">
                                     <div class="col">
-                                        <input type="text" class="form-control" name="darakQty">
+                                        <input type="text" class="form-control @error('darakQty') is-invalid @enderror" name="darakQty">
+                                        @error('darakQty')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="col">
-                                        <select class="form-control company-dropdown" name="darakUnit" id="exampleFormControlSelect1">
+                                        <select class="form-control company-dropdown @error('darakUnit') is-invalid @enderror" name="darakUnit" id="exampleFormControlSelect1">
                                             <option disabled>--Select Unit--</option>
                                             <option {{isset($product) && $product->unit == 'kilogram' ? 'selected' : '' }} value="kilogram">kilogram</option>
                                             <option {{isset($product) && $product->unit == 'sacks' ? 'selected' : '' }} value="sacks">sacks</option>
                                             <option {{isset($product) && $product->unit == 'tons' ? 'selected' : '' }} value="tons">tons</option>
                                         </select>
+                                        @error('darakUnit')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>

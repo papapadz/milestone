@@ -12,6 +12,7 @@ use App\Models\Task;
 use App\Models\ToMill;
 use App\Models\Rice;
 use App\Models\Darak;
+use App\Models\TaskDeletion;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
 use Hash;
@@ -73,6 +74,16 @@ class ManagementController extends Controller
 
     public function storePalay(Request $request)
     {
+        $validator = $request->validate([
+            'supplier' => 'required',
+            'variant' => 'required',
+            'quantity' => 'required|numeric|min:1',
+            'unit' => 'required',
+            'date_ordered' => 'required|date',
+            'date_delivered' => 'required|date',
+            'moving' => 'required'
+        ]);
+
         $company = Employee::with([
             'company'=>function($q){
                 $q->select('id', 'name');
@@ -155,6 +166,13 @@ class ManagementController extends Controller
             return view('management.toMill', $data);
 
         }elseif($request->isMethod('post')){
+
+            $validator = $request->validate([
+                'riceQty' => 'required|numeric|min:1',
+                'riceUnit' => 'required',
+                'darakQty' => 'required|numeric|min:1|max:'.$request->riceQty,
+                'darakUnit' => 'required',
+            ]);
 
             $toMill = ToMill::where('id', $request->id)->first();
 
@@ -262,15 +280,33 @@ class ManagementController extends Controller
                 'gender' => 'required',
             ]);
 
-        $user = new User;
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->email = $request->email;
-        $user->role = $request->role;
-        $user->password = app('hash')->make($request->password);
-        $user->save();
+        if($user->role == 'ceo') {
+            
+            $countCEO = Employee::where([['position','ceo'],['company_id',$request->company]])->count();
+            
+            if($countCEO==0) {
+                $user = new User;
+                $user->firstname = $request->firstname;
+                $user->lastname = $request->lastname;
+                $user->email = $request->email;
+                $user->role = $request->role;
+                $user->password = app('hash')->make($request->password);
+                $user->save();
+            } else {
+                Alert::Danger('Sorry!', 'Only 1 CEO is allowed per company');
+                return back();
+            }
+        } else {
+            $user = new User;
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->role = $request->role;
+            $user->password = app('hash')->make($request->password);
+            $user->save();
+        }
 
-        if(($user->role == 'ceo') || ($user->role == 'manager') || ($user->role == 'employee')){
+       if(($user->role == 'coe') || ($user->role == 'manager') || ($user->role == 'employee')){
             $employee = new Employee;
             $employee->user_id = $user->id;
             $employee->company_id = $request->company;
@@ -417,32 +453,37 @@ class ManagementController extends Controller
             }
         ])
         ->first();
+        $task = [];
+        $onprogress = [];
+        $completed = [];
 
-        $task = Task::with([
-            'user'=>function($q){
-                $q->select('id', 'firstname', 'lastname');
-            }
-        ])
-        ->where('company_id', $company->id)->get();
+        if($company) {
+            $task = Task::with([
+                'user'=>function($q){
+                    $q->select('id', 'firstname', 'lastname');
+                }
+            ])
+            ->where('company_id', $company->id)->get();
 
-        $onprogress = Task::with([
-            'user'=>function($q){
-                $q->select('id', 'firstname', 'lastname');
-            }
-        ])
-        ->where('company_id', $company->id)
-        ->where('status', 1)
-        ->get();
-
-        $completed = Task::with([
-            'user'=>function($q){
-                $q->select('id', 'firstname', 'lastname');
-            }
-        ])
-        ->where('company_id', $company->id)
-        ->where('status', 0)
-        ->get();
-
+            $onprogress = Task::with([
+                'user'=>function($q){
+                    $q->select('id', 'firstname', 'lastname');
+                }
+            ])
+            ->where('company_id', $company->id)
+            ->where('status', 1)
+            ->get();
+    
+            $completed = Task::with([
+                'user'=>function($q){
+                    $q->select('id', 'firstname', 'lastname');
+                }
+            ])
+            ->where('company_id', $company->id)
+            ->where('status', 0)
+            ->get();
+        }
+        
         // dd($task);
 
         return view('management.task',[
@@ -462,12 +503,15 @@ class ManagementController extends Controller
         ])
         ->first();
 
-        $employee = Employee::with([
-            'user'=>function($q){
-                $q->select('id', 'firstname', 'lastname');
-            }
-        ])->where('company_id', $company->id)->get();
-
+        $employee = [];
+        if($company) {
+            $employee = Employee::with([
+                'user'=>function($q){
+                    $q->select('id', 'firstname', 'lastname');
+                }
+            ])->where('company_id', $company->id)->get();        
+        }
+        
         // dd($employee);
 
         return view('management.addTask',[
@@ -481,7 +525,8 @@ class ManagementController extends Controller
         $validator = $request->validate([
             'employee' => 'required',
             'name' => 'required',
-            'description' => 'required'
+            'description' => 'required',
+            'priority' => 'required'
         ]);
 
         $company = Employee::with([
@@ -499,6 +544,7 @@ class ManagementController extends Controller
         $task->company_id = $company->id;
         $task->name = $request->name;
         $task->description = $request->description;
+        $task->priority = $request->priority;
         $task->save();
 
         if($task->save()){
@@ -540,6 +586,31 @@ class ManagementController extends Controller
 
     }   /* updateTask */
 
+    public function deleteTask(Request $request) {
+
+        $validator = $request->validate([
+            'modaltaskid' => 'required',
+            'delmessage' => 'required|max:100'
+        ]);
+
+        $task = Task::find($request->modaltaskid);
+        $task->status = '1';
+        $task->end_date = null;
+        $task->save();
+
+        if($task->save()){           
+            
+            TaskDeletion::create([
+                'task_id' => $request->modaltaskid,
+                'message' => $request->delmessage,
+                'user_id' => Auth::user()->id
+            ]);
+            
+            Alert::Success('Success!', 'Task Pending');
+            return back()->with('message','Operation Successful !');
+        }
+    }
+
     public function suppliers(Request $request)
     {
         $employee = Employee::select('id', 'user_id', 'company_id')->where('user_id', Auth::user()->id)->first();
@@ -560,17 +631,23 @@ class ManagementController extends Controller
 
         }elseif($request->isMethod('post'))
         {
+            $validator = $request->validate([
+                'name' => 'required|unique:suppliers',
+                'email' => 'email|required|unique:suppliers',
+                'address' => 'required',
+            ]);
+
             /* Save new supplier */
             $user = Auth::user();
             $employee = Employee::where('user_id', $user->id)->first();
-
+            
             $data = [
                 'company_id' => $employee->company_id,
                 'name'       => $request->name,
                 'email'       => $request->email,
                 'address'    => $request->address
             ];
-            Supplier::create($data);
+            Supplier::firstOrcreate($data);
             return redirect('suppliers');
         }
     }       /* addNewSupplier() */

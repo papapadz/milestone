@@ -93,7 +93,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{route('updateProduct', $row->id)}}" class="text-orange"><i class="fa fa-edit"></i></a>
+                                        @if($row->to_mill->status!='complete')
+                                            <a href="{{route('updateProduct', $row->id)}}" class="text-orange"><i class="fa fa-edit"></i></a>
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforeach

@@ -37,15 +37,24 @@
                             @csrf
                             <div class="employee-textbox mb-2">
                                 <label for="name">Supplier Name</label>
-                                <input class="form-control" placeholder="Supplier Name" type="text" class="form-control emailbox p_input" name="name" value="{{isset($supplier) ? $supplier->name : ''}}">
+                                <input class="form-control @error('name') is-invalid @enderror" placeholder="Supplier Name" type="text" name="name" value="{{isset($supplier) ? $supplier->name : ''}}">
+                                @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="employee-textbox mb-2">
                                 <label for="email">Email</label>
-                                <input class="form-control" placeholder="admin@email.com" type="text" class="form-control emailbox p_input" name="email" value="{{isset($supplier) ? $supplier->email : ''}}">
+                                <input class="form-control @error('email') is-invalid @enderror" placeholder="admin@email.com" type="text" name="email" value="{{isset($supplier) ? $supplier->email : ''}}">
+                                @error('email')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="employee-textbox mb-2">
                                 <label for="contact_no">Address</label>
-                                <textarea class="form-control" name="address" id="address" cols="30" rows="3">{{isset($supplier) ? $supplier->address : ''}}</textarea>
+                                <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" cols="30" rows="3">{{isset($supplier) ? $supplier->address : ''}}</textarea>
+                                @error('address')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             @if(request()->is('edit-supplier/*'))
                             <div class="employee-textbox">

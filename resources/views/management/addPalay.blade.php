@@ -39,22 +39,31 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="variant">Variant</label>
-                                        <input class="form-control" placeholder="Product name" type="text" class="form-control emailbox p_input" name="variant" value="{{isset($product) ? $product->name : ''}}">
+                                        <input class="form-control @error('variant') is-invalid @enderror" placeholder="Product name" type="text" name="variant" value="{{isset($product) ? $product->name : ''}}">
+                                        @error('variant')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col">
                                                 <label for="quantity">Quantity</label>
-                                                <input class="form-control" placeholder="Quantity" type="number" class="form-control emailbox p_input" name="quantity" value="{{isset($product) ? $product->quantity : ''}}">
+                                                <input class="form-control @error('quantity') is-invalid @enderror" placeholder="Quantity" type="number" name="quantity" value="{{isset($product) ? $product->quantity : ''}}">
+                                                @error('quantity')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                             <div class="col">
                                                 <label for="unit">Unit</label>
-                                                <select class="form-control company-dropdown" name="unit" id="exampleFormControlSelect1">
+                                                <select class="form-control company-dropdown @error('unit') is-invalid @enderror" name="unit" id="exampleFormControlSelect1">
                                                     <option disabled>--Select Unit--</option>
                                                     <option {{isset($product) && $product->unit == 'kilogram' ? 'selected' : '' }} value="kilogram">kilogram</option>
                                                     <option {{isset($product) && $product->unit == 'sacks' ? 'selected' : '' }} value="sacks">sacks</option>
                                                     <option {{isset($product) && $product->unit == 'tons' ? 'selected' : '' }} value="tons">tons</option>
                                                 </select>
+                                                @error('unit')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>
@@ -62,11 +71,14 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label for="date_ordered">Date Ordered </label>
-                                                <input class="form-control" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_ordered)) : ''}}" name="date_ordered">
+                                                <input class="form-control @error('date_ordered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_ordered)) : ''}}" name="date_ordered">
+                                                @error('date_ordered')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                             <div class="col">
                                                 <label for="date_delivered">Date Delivered </label>
-                                                <input class="form-control" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_delivered)) : ''}}" name="date_delivered" value="{{old('date_delivered')}}">
+                                                <input class="form-control @error('date_delivered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_delivered)) : ''}}" name="date_delivered">
                                             </div>
                                         </div>
                                     </div>
@@ -74,19 +86,25 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="supplier">Supplier</label>
-                                        <select class="form-control" name="supplier">
+                                        <select class="form-control @error('supplier') is-invalid @enderror" name="supplier">
                                             @foreach($suppliers as $row)
                                                 <option value="{{$row->id}}">{{ucwords($row->name)}}</option>
                                             @endforeach
                                         </select>
+                                        @error('supplier')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="form-group" id="company-dropdown">
                                         <label for="moving">Moving</label>
-                                        <select class="form-control company-dropdown" name="moving" value="{{old('moving')}}" id="exampleFormControlSelect1">
-                                            <option value="null">--Select Moving--</option>
+                                        <select class="form-control company-dropdown @error('moving') is-invalid @enderror" name="moving" value="{{old('moving')}}" id="exampleFormControlSelect1">
+                                            <option disabled selected>--Select Moving--</option>
                                             <option {{isset($product) && $product->moving == 'fast' ? 'selected' : '' }} value="fast">fast</option>
                                             <option {{isset($product) && $product->moving == 'slow' ? 'selected' : '' }} value="slow">slow</option>
                                         </select>
+                                        @error('moving')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     @if(request()->is('product/*/edit'))
                                     <div class="form-group" id="company-dropdown">

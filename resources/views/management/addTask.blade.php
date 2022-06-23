@@ -60,6 +60,35 @@
                             </div>
                             <br>
                             <div class="employee-textbox">
+                                <label for="description">Priority Level</label><br>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        Low Priority 5 <input value="1" checked type="radio" class="form-check-input" name="priority">
+                                    </label>
+                                  </div>
+                                  <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                      <input value="2" type="radio" class="form-check-input" name="priority">4
+                                    </label>
+                                  </div>
+                                  <div class="form-check-inline disabled">
+                                    <label class="form-check-label">
+                                      <input value="3" type="radio" class="form-check-input" name="priority">3
+                                    </label>
+                                  </div>
+                                  <div class="form-check-inline disabled">
+                                    <label class="form-check-label">
+                                      <input value="4" type="radio" class="form-check-input" name="priority">2
+                                    </label>
+                                  </div>
+                                  <div class="form-check-inline disabled">
+                                    <label class="form-check-label">
+                                      <input value="5" type="radio" class="form-check-input" name="priority">1 High Priority
+                                    </label>
+                                  </div>
+                            </div>
+                            <br>
+                            <div class="employee-textbox">
                                 <button class="btn btn-warning">
                                     Submit
                                 </button>
