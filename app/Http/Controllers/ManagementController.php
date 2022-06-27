@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Hash;
 use PDF;
 use Carbon\Carbon;
+use App\Models\Log;
 
 class ManagementController extends Controller
 {
@@ -104,7 +105,13 @@ class ManagementController extends Controller
 
         if($palay->save())
         {
-            Alert::Success('Success!', 'New Item');
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'products',
+                'row_id' => $palay->id
+            ]);
+            Alert::Success('Success!', 'Item '.$request->variant.' has been added');
             return redirect('supply');
         }
 
@@ -141,10 +148,21 @@ class ManagementController extends Controller
             {
                 if($request->toMill)
                 {
-                    ToMill::create(['product_id' => $product->id, 'company_id' => $employee->company_id]);
+                    $tomillitem = ToMill::create(['product_id' => $product->id, 'company_id' => $employee->company_id]);
+                    Log::create([
+                        'user_id' => Auth::User()->id,
+                        'action' => 'add',
+                        'table' => 'to_mill',
+                        'row_id' => $tomillitem->id
+                    ]);
                 }
-
-                Alert::Success('Success!', 'New Item');
+                Log::create([
+                    'user_id' => Auth::User()->id,
+                    'action' => 'update',
+                    'table' => 'products',
+                    'row_id' => $product->id
+                ]);
+                Alert::Success('Success!', 'Item '.$request->variant.' has been added');
                 return redirect('supply');
             }
 
@@ -185,6 +203,13 @@ class ManagementController extends Controller
             $rice->unit = $request->riceUnit;
             $rice->save();
 
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'rice',
+                'row_id' => $rice->id
+            ]);
+
             /* Create Darak record */
             $darak = new Darak;
             $darak->mill_id = $toMill->id;
@@ -194,10 +219,24 @@ class ManagementController extends Controller
             $darak->unit = $request->darakUnit;
             $darak->save();
 
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'darak',
+                'row_id' => $darak->id
+            ]);
+
             $toMill->status = 'complete';
             $toMill->save();
 
-            Alert::Success('Success!', 'New Item');
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'update',
+                'table' => 'to_mill',
+                'row_id' => $to_mill->id
+            ]);
+
+            Alert::Success('Success!', 'Item has been succesfully updated');
             return redirect('supply');
 
         }
@@ -231,15 +270,16 @@ class ManagementController extends Controller
         // dd($employee);
 
 
-        $company = Employee::with([
-            'company'=>function($q){
-                $q->select('id', 'name');
-            }
-        ])
-        ->first();
-
+        // $company = Employee::with([
+        //     'company'=>function($q){
+        //         $q->select('id', 'name');
+        //     }
+        // ])
+        // ->first();
+        
         // dd($company);
-
+        $company = Employee::where([['user_id',Auth::user()->id],['company_id',Auth::user()->employee->company_id]])->first();
+        
         return view('management.addEmployee', [
             'user'      => $user,
             'company'   => $company,
@@ -279,8 +319,8 @@ class ManagementController extends Controller
                 'address' => 'required',
                 'gender' => 'required',
             ]);
-
-        if($user->role == 'ceo') {
+     
+        if($request->role == 'ceo') {
             
             $countCEO = Employee::where([['position','ceo'],['company_id',$request->company]])->count();
             
@@ -293,7 +333,7 @@ class ManagementController extends Controller
                 $user->password = app('hash')->make($request->password);
                 $user->save();
             } else {
-                Alert::Danger('Sorry!', 'Only 1 CEO is allowed per company');
+                Alert::Error('Error!', 'Only 1 CEO is allowed per company');
                 return back();
             }
         } else {
@@ -306,7 +346,7 @@ class ManagementController extends Controller
             $user->save();
         }
 
-       if(($user->role == 'coe') || ($user->role == 'manager') || ($user->role == 'employee')){
+       if(($request->role == 'ceo') || ($request->role == 'manager') || ($request->role == 'employee')){
             $employee = new Employee;
             $employee->user_id = $user->id;
             $employee->company_id = $request->company;
@@ -316,10 +356,23 @@ class ManagementController extends Controller
             $employee->position = $user->role;
             $employee->gender = $request->gender;
             $employee->save();
+
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'employees',
+                'row_id' => $employee->id
+            ]);
         }
 
         if($user->save()){
-            Alert::Success('Success!', 'New User');
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'users',
+                'row_id' => $user->id
+            ]);
+            Alert::Success('Success!', 'New '.$request->role.' has been created');
             return back();
         }
 
@@ -412,6 +465,12 @@ class ManagementController extends Controller
         $company->save();
 
         if ($company->save()) {
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'companies',
+                'row_id' => $company->id
+            ]);
             Alert::Success('Success!', 'New Account has been added');
             return redirect()->route('dashboard');
         }else
@@ -428,6 +487,12 @@ class ManagementController extends Controller
             $company->save();
 
             if($company->save()){
+                Log::create([
+                    'user_id' => Auth::User()->id,
+                    'action' => 'update',
+                    'table' => 'companies',
+                    'row_id' => $company->id
+                ]);
                 Alert::Success('Success!', 'Unsubscribed an account');
                 return back()->with('message','Operation Successful !');
             }
@@ -437,6 +502,12 @@ class ManagementController extends Controller
             $company->save();
 
             if($company->save()){
+                Log::create([
+                    'user_id' => Auth::User()->id,
+                    'action' => 'update',
+                    'table' => 'companies',
+                    'row_id' => $company->id
+                ]);
                 Alert::Success('Success!', 'Subscribed an account');
                 return back()->with('message','Operation Successful !');
             }
@@ -447,12 +518,15 @@ class ManagementController extends Controller
     public function Task()
     {
 
-        $company = Employee::with([
-            'company'=>function($q){
-                $q->select('id', 'name');
-            }
-        ])
-        ->first();
+        // $company = Employee::with([
+        //     'company'=>function($q){
+        //         $q->select('id', 'name');
+        //     }
+        // ])
+        // ->first();
+
+        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $company = $employee->company;
         $task = [];
         $onprogress = [];
         $completed = [];
@@ -463,14 +537,14 @@ class ManagementController extends Controller
                     $q->select('id', 'firstname', 'lastname');
                 }
             ])
-            ->where('company_id', $company->id)->get();
+            ->where([['company_id', $company->id],['is_visible',true]])->get();
 
             $onprogress = Task::with([
                 'user'=>function($q){
                     $q->select('id', 'firstname', 'lastname');
                 }
             ])
-            ->where('company_id', $company->id)
+            ->where([['company_id', $company->id],['is_visible',true]])
             ->where('status', 1)
             ->get();
     
@@ -479,7 +553,7 @@ class ManagementController extends Controller
                     $q->select('id', 'firstname', 'lastname');
                 }
             ])
-            ->where('company_id', $company->id)
+            ->where([['company_id', $company->id],['is_visible',true]])
             ->where('status', 0)
             ->get();
         }
@@ -496,26 +570,18 @@ class ManagementController extends Controller
 
     public function addTask(){
 
-        $company = Employee::with([
-            'company'=>function($q){
-                $q->select('id', 'name');
-            }
-        ])
-        ->first();
-
-        $employee = [];
-        if($company) {
-            $employee = Employee::with([
-                'user'=>function($q){
-                    $q->select('id', 'firstname', 'lastname');
-                }
-            ])->where('company_id', $company->id)->get();        
-        }
-        
-        // dd($employee);
+        // $company = Employee::with([
+        //     'company'=>function($q){
+        //         $q->select('id', 'name');
+        //     }
+        // ])
+        // ->first();
+        $employee = Employee::where('user_id',Auth::user()->id)->first();
+        $company = $employee->company;
+        $employees = Employee::where('company_id', $company->id)->get();        
 
         return view('management.addTask',[
-            'employee' => $employee
+            'employee' => $employees
         ]);
 
     } /* public function addTask() */
@@ -529,15 +595,17 @@ class ManagementController extends Controller
             'priority' => 'required'
         ]);
 
-        $company = Employee::with([
-            'company'=>function($q){
-                $q->select('id', 'name');
-            }
-        ])
-        ->first();
-
+        // $company = Employee::with([
+        //     'company'=>function($q){
+        //         $q->select('id', 'name');
+        //     }
+        // ])
+        // ->first();
         $user = Auth::user();
 
+        $employee = Employee::where('user_id',$user->id)->first();
+        $company = $employee->company;
+        
         $task = new Task;
         $task->assigned_by = $user->id;
         $task->assigned_for = $request->employee;
@@ -545,10 +613,17 @@ class ManagementController extends Controller
         $task->name = $request->name;
         $task->description = $request->description;
         $task->priority = $request->priority;
+        if(!$request->has('is_visible') && $employee->user->role=='employee')
+            $task->is_visible = false;
         $task->save();
 
         if($task->save()){
-
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'tasks',
+                'row_id' => $task->id
+            ]);
             Alert::Success('Success!', 'New Task has been added');
             return redirect()->back();
 
@@ -569,6 +644,12 @@ class ManagementController extends Controller
             $task->save();
 
             if($task->save()){
+                Log::create([
+                    'user_id' => Auth::User()->id,
+                    'action' => 'update',
+                    'table' => 'tasks',
+                    'row_id' => $task->id
+                ]);
                 Alert::Success('Success!', 'Task Completed');
                 return back()->with('message','Operation Successful !');
             }
@@ -579,6 +660,12 @@ class ManagementController extends Controller
             $task->save();
 
             if($task->save()){
+                Log::create([
+                    'user_id' => Auth::User()->id,
+                    'action' => 'update',
+                    'table' => 'tasks',
+                    'row_id' => $task->id
+                ]);
                 Alert::Success('Success!', 'Task Pending');
                 return back()->with('message','Operation Successful !');
             }
@@ -599,11 +686,22 @@ class ManagementController extends Controller
         $task->save();
 
         if($task->save()){           
-            
-            TaskDeletion::create([
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'delete',
+                'table' => 'tasks',
+                'row_id' => $task->id
+            ]);
+            $taskDeletion = TaskDeletion::create([
                 'task_id' => $request->modaltaskid,
                 'message' => $request->delmessage,
                 'user_id' => Auth::user()->id
+            ]);
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'task_deletions',
+                'row_id' => $taskDeletion->id
             ]);
             
             Alert::Success('Success!', 'Task Pending');
@@ -647,7 +745,14 @@ class ManagementController extends Controller
                 'email'       => $request->email,
                 'address'    => $request->address
             ];
-            Supplier::firstOrcreate($data);
+            $supplier = Supplier::firstOrcreate($data);
+
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'add',
+                'table' => 'suppliers',
+                'row_id' => $supplier->id
+            ]);
             return redirect('suppliers');
         }
     }       /* addNewSupplier() */
@@ -669,14 +774,26 @@ class ManagementController extends Controller
            $supplier->name = $request->name;
            $supplier->email = $request->email;
            $supplier->address = $request->address;
+           if(Auth::user()->role!='ceo')
            $supplier->active = $request->active;
+           
            $supplier->save();
+
+           Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'update',
+                'table' => 'suppliers',
+                'row_id' => $supplier->id
+            ]);
 
             return redirect('suppliers');
 
         }
     }
 
+    public function logs() {
+        return view('users.ceo.logs')->with('logs',Log::all());
+    }
 
 }
 

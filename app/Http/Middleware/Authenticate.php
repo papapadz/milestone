@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Auth;
+use App\Models\Log;
 
 class Authenticate extends Middleware
 {
@@ -58,6 +59,12 @@ class Authenticate extends Middleware
                     $request->session()->put('employee', $employeeSession);
             }
             
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'login',
+                'table' => 'users',
+                'row_id' => Auth::User()->id
+            ]);
             return route('home');
         }
     }

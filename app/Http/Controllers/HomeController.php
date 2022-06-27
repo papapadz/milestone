@@ -37,7 +37,7 @@ class HomeController extends Controller
 
             $user = Auth::user();
 
-            $task = Task::where('assigned_for', $user->id)->get();
+            $task = Task::where([['assigned_for', $user->id],['is_visible', true]])->get();
 
             return view('users.ceo.dashboard', [
                 'task' =>  $task,
@@ -47,7 +47,7 @@ class HomeController extends Controller
 
             $user = Auth::user();
 
-            $task = Task::where('assigned_for', $user->id)->get();
+            $task = Task::where([['assigned_for', $user->id],['is_visible', true]])->get();
 
             return view('users.manager.dashboard',[
                 'task' =>  $task,

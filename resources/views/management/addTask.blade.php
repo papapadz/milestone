@@ -32,6 +32,15 @@
                     <div class="card-body">
                         <form class="form" action="{{route ('storeTask')}}" method="post">
                             @csrf
+                            @if(Auth::User()->role=='employee')
+                            <input type="text" value="{{ Auth::User()->id }}" name="employee" hidden>
+                            <div class="form-check">
+                                <input name="is_visible" class="form-check-input" type="checkbox" value="1" checked>
+                                <label>
+                                  Is Visible?
+                                </label>
+                              </div>
+                            @else
                             <div class="employee-textbox" id="company-dropdown">
                                 <label for="employee">Task for</label>
                                 <select class="form-control company-dropdown @error('employee') is-invalid @enderror" name="employee" value="{{old('employee')}}" id="exampleFormControlSelect1">
@@ -44,6 +53,7 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                             </div>
+                            @endif
                             <div class="employee-textbox">
                                 <label for="name">Task name</label>
                                 <input class="form-control @error('name') is-invalid @enderror" placeholder="Tast name" type="text" name="name" value="{{old('name')}}">

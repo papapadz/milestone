@@ -42,4 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function employee() {
+        return $this->hasOne(Employee::class,'user_id','id');
+    }
 }

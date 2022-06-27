@@ -22,7 +22,9 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        My Tasks
+                        My Tasks <a href="{{ route('addTask') }}" class="mr-2 btn btn-sm btn-warning float-right">
+                            <i class="nav-icon fa-solid fas fa-plus"></i>
+                        </a>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">

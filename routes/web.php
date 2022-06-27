@@ -83,6 +83,8 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::post('store-task', [ManagementController::class, 'storeTask'])->name('storeTask');
     Route::get('update-task/{id}', [ManagementController::class, 'updateTask'])->name('updateTask');
     Route::get('delete-task', [ManagementController::class, 'deleteTask'])->name('deleteTask');
+
+    Route::get('logs', [ManagementController::class, 'logs'])->name('logs');
 });
 
 /*

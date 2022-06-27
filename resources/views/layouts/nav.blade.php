@@ -15,6 +15,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('assets/plugins/fontawesome-free/css/all.min.css')}}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('assets/dist/css/adminlte.min.css')}}">
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.12.1/b-2.2.3/b-html5-2.2.3/b-print-2.2.3/datatables.min.css"/>
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -108,6 +111,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </li>
               </ul>
             </li>
+            @if((Auth::user()->role == 'ceo'))
+            <li class="nav-item menu-open">
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{ route('logs') }}" class="nav-link @if(Request::url() === url('logs')) active @endif">
+                    <i class="nav-icon fa-solid fas fa-warehouse text-red"></i>
+                    <p class="text-red">Audit Logs</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            @endif
             @if((Auth::user()->role == 'ceo')||(Auth::user()->role == 'manager'))
             <li class="nav-item menu-is-opening {{request()->is('supply') || request()->is('suppliers') || Request::url() === url('add-supplier') ? 'menu-open' : '' }}">
               <a href="#" class="nav-link">
@@ -269,6 +284,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('assets/dist/js/adminlte.min.js')}}"></script>
+<!-- Data Tables -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.12.1/b-2.2.3/b-html5-2.2.3/b-print-2.2.3/datatables.min.js"></script>
+
+<script>
+  $('table').DataTable()
+</script>
 @yield('scripts')
 </body>
 </html>

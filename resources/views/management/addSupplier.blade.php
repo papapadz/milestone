@@ -56,7 +56,7 @@
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            @if(request()->is('edit-supplier/*'))
+                            @if(request()->is('edit-supplier/*') && (Auth::user()->role != 'ceo'))
                             <div class="employee-textbox">
                                 <label for="contact_no">Status</label>
                                 <select name="active" class="form-control">

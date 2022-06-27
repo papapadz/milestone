@@ -93,7 +93,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($row->to_mill->status!='complete')
+                                        @if(!$row->to_mill || $row->to_mill->status!='complete')
                                             <a href="{{route('updateProduct', $row->id)}}" class="text-orange"><i class="fa fa-edit"></i></a>
                                         @endif
                                     </td>

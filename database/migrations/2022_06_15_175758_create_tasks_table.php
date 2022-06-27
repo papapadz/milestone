@@ -23,6 +23,7 @@ class CreateTasksTable extends Migration
             $table->smallInteger('status')->default(1);
             $table->dateTime('end_date')->nullable();
             $table->enum('priority',[1,2,3,4,5])->nullable();
+            $table->boolean('is_visible')->default(true);
             $table->timestamps();
         });
     }

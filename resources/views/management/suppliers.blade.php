@@ -58,7 +58,8 @@
                                             <span class="badge bg-warning">inactive</span>
                                             @endif
                                         </td>
-                                        <td><a href="{{route('editSupplier', $row->id)}}" class="text-orange"><i class="fa fa-edit"></i></a></td>
+                                        <td>
+                                            <a href="{{route('editSupplier', $row->id)}}" class="text-orange"><i class="fa fa-edit"></i></a></td>
                                     </tr>
                                 @endforeach
                             </tbody>
