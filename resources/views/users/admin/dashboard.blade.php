@@ -76,11 +76,20 @@
                             @endif
                             </tbody>
                         </table>
-
+                        <div id="chart" style="height: 300px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    const chart = new Chartisan({
+        el: '#chart',
+        url: "@chart('simple_chart')"
+    })
+    </script>
 @endsection

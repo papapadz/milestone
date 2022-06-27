@@ -15,8 +15,10 @@ class SimpleChart extends BaseChart
      * It must always return an instance of Chartisan
      * and never a string or an array.
      */
+
     public function handler(Request $request): Chartisan
     {
+        
         return Chartisan::build()
             ->labels(['First', 'Second', 'Third'])
             ->dataset('Sample', [1, 2, 3])

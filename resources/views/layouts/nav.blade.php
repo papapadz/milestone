@@ -17,7 +17,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('assets/dist/css/adminlte.min.css')}}">
   <!-- DataTables -->
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.12.1/b-2.2.3/b-html5-2.2.3/b-print-2.2.3/datatables.min.css"/>
-
+  
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -282,7 +282,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('assets/plugins/jquery/jquery.min.js')}}"></script>
 <!-- Bootstrap 4 -->
 <script src="{{asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-<!-- AdminLTE App -->
+<!-- AdminLTE App-->
 <script src="{{asset('assets/dist/js/adminlte.min.js')}}"></script>
 <!-- Data Tables -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
@@ -292,6 +292,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
   $('table').DataTable()
 </script>
-@yield('scripts')
-</body>
+
+<!-- Charting library -->
+  <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
+  <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
+@yield('scripts')</body>
 </html>
