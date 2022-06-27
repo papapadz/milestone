@@ -19,6 +19,8 @@ use Hash;
 use PDF;
 use Carbon\Carbon;
 use App\Models\Log;
+use App\Models\PalayVariant;
+use App\Mail\NotifyMail;
 
 class ManagementController extends Controller
 {
@@ -66,6 +68,7 @@ class ManagementController extends Controller
         $employee = Employee::where('user_id', $user->id)->first();
 
         $data = [
+            'variants' => PalayVariant::get(),
             'suppliers'  => Supplier::where('company_id', $employee->company_id)->where('active', 1)->orderBy('name', 'asc')->get()
         ];
 
@@ -84,7 +87,7 @@ class ManagementController extends Controller
             'date_delivered' => 'required|date',
             'moving' => 'required'
         ]);
-
+        
         $company = Employee::with([
             'company'=>function($q){
                 $q->select('id', 'name');
@@ -105,6 +108,8 @@ class ManagementController extends Controller
 
         if($palay->save())
         {
+            PalayVariant::firstOrCreate(['variant'=>$request->variant]);
+                
             Log::create([
                 'user_id' => Auth::User()->id,
                 'action' => 'add',
@@ -127,7 +132,8 @@ class ManagementController extends Controller
             $product = Product::where('id', $request->id)->with(['to_mill'])->first();
             $data = [
                 'suppliers' => Supplier::where('company_id', $employee->company_id)->where('active', 1)->orderBy('name', 'asc')->get(),
-                'product'   => $product
+                'product'   => $product,
+                'variants' => PalayVariant::get(),
             ];
 
             return view('management.addPalay', $data);
@@ -185,15 +191,37 @@ class ManagementController extends Controller
 
         }elseif($request->isMethod('post')){
 
+            $toMill = ToMill::where('id', $request->id)->first();
+            
+            if($toMill->product->unit=='ton')
+                $max = $toMill->product->quantity*1000;
+            else if($toMill->product->unit=='sacks')
+                $max = $toMill->product->quantity*50;
+            else
+                $max = $toMill->product->quantity;
+
+            if($request->riceUnit=='ton')
+                $riceQty = $request->riceQty*1000;
+            else if($request->riceUnit=='sacks')
+                $riceQty = $request->riceQty*50;
+            else
+                $riceQty = $request->riceQty;
+
+            if($request->darakUnit=='ton')
+                $darakQty = $request->darakQty*1000;
+            else if($request->darakUnit=='sacks')
+                $darakQty = $request->darakQty*50;
+            else
+                $darakQty = $request->darakQty;
+                
             $validator = $request->validate([
-                'riceQty' => 'required|numeric|min:1',
+                'riceQty' => 'required|numeric|min:1|max:'.$max,
                 'riceUnit' => 'required',
-                'darakQty' => 'required|numeric|min:1|max:'.$request->riceQty,
+                'darakQty' => 'required|numeric|min:1|max:'.($max-$riceQty),
                 'darakUnit' => 'required',
             ]);
 
-            $toMill = ToMill::where('id', $request->id)->first();
-
+            
             /* Create Rice record */
             $rice = new Rice;
             $rice->mill_id = $toMill->id;
@@ -233,9 +261,45 @@ class ManagementController extends Controller
                 'user_id' => Auth::User()->id,
                 'action' => 'update',
                 'table' => 'to_mill',
-                'row_id' => $to_mill->id
+                'row_id' => $toMill->id
             ]);
 
+            $quantityLeft = $max - ($riceQty+$darakQty);
+            $newQuantity = 0;
+            $newUnit = 'kilogram';
+            if($quantityLeft>=1000) {
+                $newQuantity = $quantityLeft/1000;
+                $newUnit = 'tons';
+            } else if($quantityLeft>=50) {
+                $newQuantity = $quantityLeft/1000;
+                $newUnit = 'sacks';
+            } else 
+                $newQuantity = $quantityLeft;
+
+            $product = Product::find($toMill->product_id);
+            $product->quantity = $newQuantity;
+            $product->unit = $newUnit;
+            $product->save();
+ 
+            Log::create([
+                'user_id' => Auth::User()->id,
+                'action' => 'update',
+                'table' => 'products',
+                'row_id' => $product->id
+            ]);
+
+            if($quantityLeft<10) {
+
+                $details = [
+                    'title' =>'Critical Limit Warning',
+                    'message' => 'Palay Variant '.$product->name.' is at critical level. Current inventory: '.$newQuantity.' '.$newUnit.'. Please make necessary actions.'
+                ];
+
+                $employees = Employee::where('company_id',$product->company_id)->get();
+                foreach($employees as $employee) 
+                    \Mail::to($employee->user->email)->send(new NotifyMail($details));
+            }
+            
             Alert::Success('Success!', 'Item has been succesfully updated');
             return redirect('supply');
 

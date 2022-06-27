@@ -38,8 +38,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="variant">Variant</label>
-                                        <input class="form-control @error('variant') is-invalid @enderror" placeholder="Product name" type="text" name="variant" value="{{isset($product) ? $product->name : ''}}">
+                                        <label for="variant">Variant @if(!isset($product->to_mill->id))<input id="newVariant" type="checkbox"><small><i>(New Variant)</i></small>@endif</label>
+
+                                        <input id="variant1" disabled=true style="display: none" class="form-control @error('variant') is-invalid @enderror" placeholder="Product name" type="text" name="variant" value="{{isset($product) ? $product->name : ''}}">
+                                        <select id="variant2" style="display: block" name="variant" class="form-control @error('variant') is-invalid @enderror">
+                                            @forelse($variants as $variant)
+                                            <option value="{{ $variant->variant }}">{{ $variant->variant }}</option>
+                                            @empty
+                                            <option disabled selected>No Record</option>
+                                            @endforelse
+                                        </select>
                                         @error('variant')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -141,4 +149,23 @@
 
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+$('#newVariant').on('click', function() {
+   if($(this).is(':checked')) {
+    $('#variant1').show()
+    $('#variant1').prop('disabled',false)
+    $('#variant2').hide()
+    $('#variant2').prop('disabled',true)
+   } else {
+    $('#variant2').show()
+    $('#variant2').prop('disabled',false)
+    $('#variant1').hide()
+    $('#variant1').prop('disabled',true)
+   }
+
+})
+</script>
 @endsection
