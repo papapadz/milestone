@@ -20,6 +20,7 @@ class CreateToMillTable extends Migration
             $table->foreignId('company_id')->constrained('companies');
             $table->timestamp('mill_date')->nullable()->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->enum('status', ['in progress', 'complete', 'pending'])->default('in progress')->nullable();
+            $table->boolean('is_sold')->default(false);
             $table->timestamps();
         });
     }

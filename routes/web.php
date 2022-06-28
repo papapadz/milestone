@@ -63,6 +63,7 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
 
     // supply
     Route::get('supply', [ManagementController::class, 'supply'])->name('supply');
+    Route::get('supply/milled', [ManagementController::class, 'supplyMilled'])->name('supply-milled');
     Route::get('suppliers', [ManagementController::class, 'suppliers'])->name('suppliers');
     Route::get('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier');
     Route::post('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier');
@@ -85,6 +86,9 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::get('delete-task', [ManagementController::class, 'deleteTask'])->name('deleteTask');
 
     Route::get('logs', [ManagementController::class, 'logs'])->name('logs');
+    Route::get('notifications', [ManagementController::class, 'notifications'])->name('notifications');
+    Route::get('notifications/mark/{id}', [ManagementController::class, 'notificationsMark'])->name('notifications-read');
+    Route::get('product/to-mill/{id}/sold',[ManagementController::class, 'toMillUpdateSold'])->name('toMillSold'); 
 });
 
 /*

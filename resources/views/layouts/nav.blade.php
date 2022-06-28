@@ -116,7 +116,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <ul class="nav nav-treeview">
                 <li class="nav-item">
                   <a href="{{ route('logs') }}" class="nav-link @if(Request::url() === url('logs')) active @endif">
-                    <i class="nav-icon fa-solid fas fa-warehouse text-red"></i>
+                    <i class="nav-icon fa-solid fas fa-list-ol text-red"></i>
                     <p class="text-red">Audit Logs</p>
                   </a>
                 </li>
@@ -124,7 +124,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </li>
             @endif
             @if((Auth::user()->role == 'ceo')||(Auth::user()->role == 'manager'))
-            <li class="nav-item menu-is-opening {{request()->is('supply') || request()->is('suppliers') || Request::url() === url('add-supplier') ? 'menu-open' : '' }}">
+            <li class="nav-item menu-is-opening {{request()->is('supply') || request()->is('supply/milled') || request()->is('suppliers') || Request::url() === url('add-supplier') ? 'menu-open' : '' }}">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-chart-pie"></i>
                 <p> Inventory <i class="right fas fa-angle-left"></i> </p>
@@ -133,7 +133,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="nav-item">
                   <a href="{{ route('supply') }}" class="nav-link {{request()->is('supply') ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Products</p>
+                  <p>Raw Products</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ route('supply-milled') }}" class="nav-link {{request()->is('supply/milled') ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Milled Products</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -195,13 +201,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <i class="nav-icon fas fa-chart-pie"></i>
                         <p> Inventory <i class="right fas fa-angle-left"></i> </p>
                     </a>
+                    
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('supply') }}" class="nav-link {{request()->is('supply') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Products</p>
-                            </a>
-                        </li>
+                      <li class="nav-item">
+                        <a href="{{ route('supply') }}" class="nav-link {{request()->is('supply') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Raw Products</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{{ route('supply-milled') }}" class="nav-link {{request()->is('supply/milled') ? 'active' : '' }}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Milled Products</p>
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{{ route('suppliers') }}" class="nav-link {{request()->is('suppliers') || Request::url() === url('add-supplier')? 'active' : '' }}">
+                          <i class="far fa-circle nav-icon"></i>
+                          <p>Suppliers</p>
+                        </a>
+                      </li>
                         @endif
             <li class="nav-item menu-open">
               <ul class="nav nav-treeview">
@@ -209,6 +228,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   <a href="{{ route('manageAccount') }}" class="nav-link  @if(Request::url() === url('manage-account')) active @endif">
                     <i class="nav-icon fa-solid fas fa-user-cog text-red"></i>
                     <p class="text-red">Manage Account</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item menu-open">
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{ route('notifications') }}" class="nav-link  @if(Request::url() === url('notifications')) active @endif">
+                    <i class="nav-icon fa-solid fas fa-bell text-red"></i>
+                    <p class="text-red">Notifications</p>
                   </a>
                 </li>
               </ul>

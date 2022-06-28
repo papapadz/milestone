@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use App\Models\Log;
 use App\Models\PalayVariant;
 use App\Mail\NotifyMail;
+use App\Models\Notification;
 
 class ManagementController extends Controller
 {
@@ -35,10 +36,9 @@ class ManagementController extends Controller
             }
         ])->where('user_id', $user->id)->first();
 
-        $palay = Product::where('active', 1)->where('company_id', $employee->company->id)->with(['supplier' => function($q){
+        $palay = Product::where('active', 1)->where('company_id', $employee->company_id)->with(['supplier' => function($q){
             $q->select('id', 'name');
         }])->orderBy('created_at', 'desc')->get();
-
 
         $toMill = ToMill::where('company_id', $employee->company_id)->with(['product' => function($q){
             $q->select('id', 'company_id', 'supplier_id', 'name', 'quantity', 'unit');
@@ -61,6 +61,40 @@ class ManagementController extends Controller
         ]);
 
     }   /* function Supply()*/
+
+    public function supplyMilled() {
+        $user = Auth::user();
+
+        $employee = Employee::with([
+            'company'=>function($q){
+                $q->select('id', 'name');
+            }
+        ])->where('user_id', $user->id)->first();
+
+        $palay = Product::where('active', 1)->where('company_id', $employee->company_id)->with(['supplier' => function($q){
+            $q->select('id', 'name');
+        }])->orderBy('created_at', 'desc')->get();
+
+        $toMill = ToMill::where('company_id', $employee->company_id)->with(['product' => function($q){
+            $q->select('id', 'company_id', 'supplier_id', 'name', 'quantity', 'unit');
+        }])->orderBy('created_at', 'desc')->get();
+
+        $rice = Rice::where('company_id', $employee->company_id)->with(['product' => function($q){
+            $q->select('id', 'company_id', 'supplier_id', 'name', 'quantity', 'unit');
+        }])->orderBy('created_at', 'desc')->get();
+
+        $darak = Darak::where('company_id', $employee->company_id)->with(['product' => function($q){
+            $q->select('id', 'company_id', 'supplier_id', 'name', 'quantity', 'unit');
+        }])->orderBy('created_at', 'desc')->get();
+
+        // dd($toMill);
+        return view('management.supplyMilled', [
+            'palay'     => $palay,
+            'toMill'    => $toMill,
+            'rice'      => $rice,
+            'darak'     => $darak
+        ]);
+    }
 
     public function addPalay()
     {
@@ -88,15 +122,8 @@ class ManagementController extends Controller
             'moving' => 'required'
         ]);
         
-        $company = Employee::with([
-            'company'=>function($q){
-                $q->select('id', 'name');
-            }
-        ])
-        ->first();
-
         $palay = new Product;
-        $palay->company_id = $company->id;
+        $palay->company_id = Auth::User()->employee->company_id;
         $palay->supplier_id = $request->supplier;
         $palay->name = $request->variant;
         $palay->quantity = $request->quantity;
@@ -160,6 +187,12 @@ class ManagementController extends Controller
                         'action' => 'add',
                         'table' => 'to_mill',
                         'row_id' => $tomillitem->id
+                    ]);
+
+                    Notification::create([
+                        'sender_id' => Auth::User()->id,
+                        'receiver_id' => Auth::User()->id,
+                        'message' => 'Rice variant '.$product->name.' has been added to the To Mill List.'
                     ]);
                 }
                 Log::create([
@@ -281,6 +314,11 @@ class ManagementController extends Controller
             $product->unit = $newUnit;
             $product->save();
  
+            Notification::create([
+                'receiver_id' => Auth::User()->id,
+                'message' => 'Rice variant '.$product->name.' has been milled and produced '.$request->riceQty.' '.$request->riceUnit.' of Rice and '.$request->darakQty.' '.$request->darakUnit.' of Darak. Remaining inventory is '.$newQuantity.' '.$newUnit.'.'
+            ]);
+
             Log::create([
                 'user_id' => Auth::User()->id,
                 'action' => 'update',
@@ -296,8 +334,13 @@ class ManagementController extends Controller
                 ];
 
                 $employees = Employee::where('company_id',$product->company_id)->get();
-                foreach($employees as $employee) 
+                foreach($employees as $employee) {
                     \Mail::to($employee->user->email)->send(new NotifyMail($details));
+                    Notification::create([
+                        'receiver_id' => $employee->user_id,
+                        'message' => $details['message']
+                    ]);
+                }
             }
             
             Alert::Success('Success!', 'Item has been succesfully updated');
@@ -682,12 +725,30 @@ class ManagementController extends Controller
         $task->save();
 
         if($task->save()){
+
+            if(Auth::User()->id!=$request->employee) {
+                $message = 'Assigned the task '.$request->name.' with level '.$request->priority.' priority.';
+                $details = [
+                    'title' => 'New Assigned Task',
+                    'message' => $user->firstname.' '.$user->lastname.' '.$message
+                ];
+    
+                Notification::create([
+                    'sender_id' =>  $user->id,
+                    'receiver_id' => $task->assigned_for,
+                    'message' => $message
+                ]);
+    
+                \Mail::to($task->user->email)->send(new NotifyMail($details));
+            }
+
             Log::create([
                 'user_id' => Auth::User()->id,
                 'action' => 'add',
                 'table' => 'tasks',
                 'row_id' => $task->id
             ]);
+
             Alert::Success('Success!', 'New Task has been added');
             return redirect()->back();
 
@@ -714,6 +775,13 @@ class ManagementController extends Controller
                     'table' => 'tasks',
                     'row_id' => $task->id
                 ]);
+
+                Notification::create([
+                    'sender_id' =>  Auth::User()->id,
+                    'receiver_id' => $task->assigned_by,
+                    'message' => 'Marked the task '.$task->name.' with level '.$task->priority.' priority as Complete'
+                ]);
+
                 Alert::Success('Success!', 'Task Completed');
                 return back()->with('message','Operation Successful !');
             }
@@ -729,6 +797,12 @@ class ManagementController extends Controller
                     'action' => 'update',
                     'table' => 'tasks',
                     'row_id' => $task->id
+                ]);
+
+                Notification::create([
+                    'sender_id' =>  Auth::User()->id,
+                    'receiver_id' => $task->assigned_by,
+                    'message' => 'Marked the task '.$task->name.' with level '.$task->priority.' priority as Pending'
                 ]);
                 Alert::Success('Success!', 'Task Pending');
                 return back()->with('message','Operation Successful !');
@@ -767,7 +841,11 @@ class ManagementController extends Controller
                 'table' => 'task_deletions',
                 'row_id' => $taskDeletion->id
             ]);
-            
+            Notification::create([
+                'sender_id' =>  Auth::User()->id,
+                'receiver_id' => $task->assigned_by,
+                'message' => 'Deleted the task '.$task->name.' with level '.$task->priority.' with the message '.$request->delmessage.'.'
+            ]);
             Alert::Success('Success!', 'Task Pending');
             return back()->with('message','Operation Successful !');
         }
@@ -859,5 +937,40 @@ class ManagementController extends Controller
         return view('users.ceo.logs')->with('logs',Log::all());
     }
 
+    public function notifications() {
+        return view('users.notifications')->with('notifications',Notification::where('receiver_id',Auth::user()->id)->get());
+    }
+
+    public function notificationsMark($id) {
+
+        Notification::where('id',$id)->update(['is_read' => true]);
+        Alert::Success('Success!', 'Notification marked as read!');
+        return redirect()->route('notifications');
+    }
+    
+    public function toMillUpdateSold($id) {
+        
+        $toMill = ToMill::find($id);
+        $toMill->is_sold = true;
+        $toMill->save();
+
+        $employees = Employee::where('company_id',$toMill->company_id)->get();
+        foreach($employees as $employee) {
+            if($employee->user->role == 'ceo' || $employee->user->role == 'manager')
+                Notification::create([
+                    'receiver_id' => $employee->user_id,
+                    'message' => 'Palay with variant '.$toMill->product->name.' with '.$toMill->rice->quantity.' '.$toMill->rice->unit.' and '.$toMill->darak->quantity.' '.$toMill->rice->unit.'.'
+                ]);
+        }
+
+        Log::create([
+            'user_id' => Auth::User()->id,
+            'action' => 'update',
+            'table' => 'to_mill',
+            'row_id' => $id
+        ]);
+        Alert::Success('Success!', 'Milled Products marked as sold!');
+        return redirect()->route('supply-milled');
+    }
 }
 

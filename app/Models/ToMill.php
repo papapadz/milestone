@@ -15,4 +15,12 @@ class ToMill extends Model
     {
         return $this->hasOne(Product::class, 'id', 'product_id');
     }
+
+    public function rice() {
+        return $this->hasOne(Rice::class,'mill_id','id');
+    }
+
+    public function darak() {
+        return $this->hasOne(Darak::class,'mill_id','id');
+    }
 }

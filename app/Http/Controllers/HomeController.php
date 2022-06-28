@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
 use App\Models\Task;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -24,13 +25,25 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
+        $headers = [
+            'datefrom' => Carbon::now()->toDateString(),
+            'dateto' => Carbon::now()->toDateString(),
+            'flag' => 1
+        ];
         if(Auth::user()->role == 'admin'){
+            
+            if($request->has('datefrom') && $request->has('dateto') && $request->has('flag')) {
+                $headers['datefrom'] = $request->datefrom;
+                $headers['dateto'] = $request->dateto;
+                $headers['flag'] = $request->flag;
+            }
             $company = Company::get();
 
             return view('users.admin.dashboard', [
-                'company' => $company
+                'company' => $company,
+                'headers' => $headers
             ]);
         }
         if(Auth::user()->role == 'ceo'){
@@ -41,6 +54,7 @@ class HomeController extends Controller
 
             return view('users.ceo.dashboard', [
                 'task' =>  $task,
+                'headers' => $headers
             ]);
         }
         if(Auth::user()->role == 'manager'){
@@ -51,6 +65,7 @@ class HomeController extends Controller
 
             return view('users.manager.dashboard',[
                 'task' =>  $task,
+                'headers' => $headers
             ]);
         }
         if(Auth::user()->role == 'employee'){
@@ -63,6 +78,7 @@ class HomeController extends Controller
 
             return view('users.employee.dashboard', [
                 'task' =>  $task,
+                'headers' => $headers
             ]);
         }
     }
