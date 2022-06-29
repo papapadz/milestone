@@ -27,7 +27,7 @@
 
                             <div class="col-md-6">
                                 <input id="password" type="password" class="form-control" name="password" placeholder="Enter new password">
-                                <span class="text-danger">@error('password'){{$message}}@enderror</span>
+                                <span class="text-danger">@error('password') Password must contain lower (a-z) and uppercase characters (A-Z), numbers (0-9) and special characters (!@#$%^&*()) @enderror</span>
                         
                             </div>
                         </div>

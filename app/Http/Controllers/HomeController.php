@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Company;
 use App\Models\Task;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use App\Models\User;
+use DB;
 
 class HomeController extends Controller
 {
@@ -27,6 +30,30 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        $user = Auth::user();
+        if($user->login_attempt==0) {
+
+            $token = Str::random(60);
+            $user = User::find(Auth::User()->id);
+            $user->remember_token = $token;
+            $user->save();
+
+            DB::table(config('auth.passwords.users.table'))->where('email',$user->email)->delete();
+            DB::table(config('auth.passwords.users.table'))->insert([
+                'email' => $user->email, 
+                'token' => bcrypt($token),
+                'created_at' => Carbon::now()
+            ]);
+
+            return redirect()->route('password.reset',[
+                'token' => $token,
+                'email' => Auth::User()->email
+            ]);
+        }
+
+        $user->login_attempt = $user->login_attempt + 1;
+        $user->save();
+       
         $headers = [
             'datefrom' => Carbon::now()->toDateString(),
             'dateto' => Carbon::now()->toDateString(),

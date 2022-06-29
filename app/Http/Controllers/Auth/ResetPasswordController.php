@@ -8,7 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use App\Models\User;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\Validator;
 
 class ResetPasswordController extends Controller
 {
@@ -32,11 +32,22 @@ class ResetPasswordController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    protected function rules()
+    {
+        return [
+            'token' => 'required',
+            'email' => 'email|required|exists:users',
+            'password' => 'required|confirmed|min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
+        ];
+    }
+
     protected function resetPassword($user, $password)
     {
+
         $user->forceFill([
             'password' => bcrypt($password),
             'remember_token' => Str::random(60),
+            'login_attempt' => 1
         ])->save();
 
         //$this->guard()->login($user);

@@ -39,15 +39,16 @@
                             @csrf
                             <div class="employee-textbox">
                                 <label for="current">Current Password</label>
-                                <input class="form-control" placeholder="Current Password" type="password" class="form-control emailbox p_input" name="current" value="{{old('current')}}">
+                                <input class="form-control" placeholder="Current Password" type="password" name="current" value="{{old('current')}}">
                             </div>
                             <div class="employee-textbox">
                                 <label for="new">New Password</label>
-                                <input class="form-control" placeholder="New Password" type="password" class="form-control emailbox p_input" name="new" value="{{old('new')}}">
+                                <input class="form-control @error('new') is-invalid @enderror" placeholder="New Password" type="password" name="new" value="{{old('new')}}">
+                                @error('new') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="employee-textbox">
                                 <label for="confirm">Confirm New Password</label>
-                                <input class="form-control" placeholder="Confirm New Password" type="password" class="form-control emailbox p_input" name="confirm" value="{{old('confirm')}}">
+                                <input class="form-control @error('new') is-invalid @enderror" placeholder="Confirm New Password" type="password" name="confirm" value="{{old('confirm')}}">
                             </div>
                             <br>
                             <div class="employee-textbox">

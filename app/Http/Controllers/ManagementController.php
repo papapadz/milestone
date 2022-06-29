@@ -506,14 +506,26 @@ class ManagementController extends Controller
             //they match
 
             if($new == $confirm){
+                $validator = $request->validate([
+                    'new' => 'min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
+                ],[
+                    'new.regex' => 'Password must contain lower (a-z) and uppercase characters (A-Z), numbers (0-9) and special characters (!@#$%^&*())',
+                ]);
+                
                 $pass = User::where('id', $user->id)->update([
                     'password'    => app('hash')->make($new),
                 ]);
 
                 Alert::Success('Success!', 'Password changed');
-                return redirect('/');
+                return redirect()->back();
+            } else {
+                Alert::Error('Success!', 'New password does not match');
+                return redirect()->back();
             }
 
+        } else  {
+            Alert::Error('Success!', 'Password is Incorrect');
+            return redirect()->back();
         }
 
 
@@ -583,7 +595,7 @@ class ManagementController extends Controller
             Alert::Success('Success!', 'New Account has been added');
             return redirect()->route('dashboard');
         }else
-            Alert::Danger('Error!', 'Something went wrong');
+            Alert::Error('Error!', 'Something went wrong');
             return back('management.addAccount');
 
     } /*public function storeAccount()*/

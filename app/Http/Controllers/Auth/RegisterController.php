@@ -69,6 +69,9 @@ class RegisterController extends Controller
             'contact_no' => 'required|min:11',
             'address' => 'required',
             'gender' => 'required',
+            'password' => 'required|confirmed|min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/'
+        ],[
+            'password.regex' => 'Password must contain lower (a-z) and uppercase characters (A-Z), numbers (0-9) and special characters (!@#$%^&*())'
         ]);
     }
 
