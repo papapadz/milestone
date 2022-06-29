@@ -8,65 +8,88 @@
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form class="form" action="{{route('register')}}" method="post">
                         @csrf
-
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <!-- firstname -->
+                        <div class="employee-textbox">
+                            <label for="firstname">Firstname</label>
+                            <input class="form-control @error('firstname') is-invalid @enderror" placeholder="firstname" type="text"  name="firstname" value="{{old('firstname')}}">
+                            @error('firstname')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <!-- lastname -->
+                        <div class="employee-textbox">
+                            <label for="lastname">Lastname</label>
+                            <input class="form-control @error('lastname') is-invalid @enderror" placeholder="lastname" type="text"  name="lastname" value="{{old('lastname')}}">
+                            @error('lastname')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <!-- role -->
+                        <input type="text" value="employee" name="role" hidden>
+                        <!-- email -->
+                        <div class="employee-textbox">
+                            <label for="email">Email</label>
+                            <input class="form-control @error('email') is-invalid @enderror" placeholder="email" type="email"  name="email" value="{{old('email')}}">
+                            @error('email')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div> 
+                        <!-- company -->
+                        <div class="employee-textbox" id="company-dropdown">
+                            <label for="company">Company</label>
+                            <select class="form-control company-dropdown @error('company') is-invalid @enderror" name="company" value="{{old('company')}}" id="exampleFormControlSelect1">
+                                <option disabled selected>--Select Company--</option>
+                                @foreach($company as $row)
+                                <option value="{{$row->id}}"> {{$row->name }} </option>
+                                @endforeach
+                            </select>
+                            @error('company')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
+                        <div class="employee-textbox">
+                            <label for="age">Age</label>
+                            <input class="form-control @error('age') is-invalid @enderror" placeholder="Age" type="number"  name="age" value="{{old('age')}}">
+                            @error('age')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
+                        <div class="employee-textbox">
+                            <label for="contact_no">Contact No</label>
+                            <input class="form-control @error('contact_no') is-invalid @enderror" placeholder="09xxxxxxxxx" type="number"  name="contact_no" value="{{old('contact_no')}}">
+                            @error('contact_no')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="employee-textbox">
+                            <label for="address">Address</label>
+                            <textarea class="form-control @error('address') is-invalid @enderror" placeholder="Your Personal Address" name="address">{{old('address')}}</textarea>
+                            @error('address')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="employee-textbox" id="company-dropdown">
+                            <label for="gender">Gender</label>
+                            <select class="form-control company-dropdown @error('gender') is-invalid @enderror" name="gender" value="{{old('gender')}}" id="exampleFormControlSelect1">
+                                <option disabled selected>--Select Gender--</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="gay">Gay</option>
+                                <option value="lesbian">Lesbian</option>
+                                <option value="bixesual">Bisexual</option>
+                                <option value="NA">Choose not to disclose</option>
+                            </select>
+                            @error('gender')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <br>
+                        <div class="employee-textbox">
+                            <button class="btn btn-warning">
+                                Submit
+                            </button>
                         </div>
                     </form>
                 </div>

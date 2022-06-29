@@ -33,6 +33,7 @@
                     <ul>
                         <li><a href="{{route('home')}}">HOME</a></li>
                         <li><a href="{{url('login')}}">LOGIN</a></li>
+                        <li><a href="{{url('register')}}">REGISTER</a></li>
                     </ul>
                 </nav>
             </div>

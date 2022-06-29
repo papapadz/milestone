@@ -21,6 +21,12 @@
                         <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
                     </form>
                 </div>
+                <div class="card-footer">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-warning">{{ __('Log Out') }}</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

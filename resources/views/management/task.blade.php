@@ -38,6 +38,8 @@
                                 <tr>
                                     <th>Assigned to</th>
                                     <th>Task</th>
+                                    <th>Date Assigned</th>
+                                    <th>Date Completed</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -63,6 +65,14 @@
                                             <span class="badge badge-warning">Priority Level 4</span>
                                         @elseif($row->priority==5)
                                             <span class="badge badge-warning">Priority Level 5</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ Carbon\Carbon::parse($row->created)->toDateTimeString() }}</td>
+                                    <td>
+                                        @if($row->end_date)
+                                        {{ Carbon\Carbon::parse($row->end_date)->toDateTimeString() }}
+                                        @else
+                                        -
                                         @endif
                                     </td>
                                     <td> {{$row->status == 1 ? 'In Progress...' : 'Completed' }} </td>
@@ -96,40 +106,6 @@
             <div class="col-lg-6">
                 <div class="card">
                     <div class="card-header">
-                        IN PROGRESS
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead class="bg-warning">
-                                <tr>
-                                    <th>Assigned To</th>
-                                    <th>Task</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if(count($onprogress) == 0)
-                                <span class="d-flex justify-content-center bg-danger">
-                                    No On Going Tasks
-                                </span>
-                                @endif
-                                @if(count($onprogress) != 0)
-                                @foreach($onprogress as $row)
-                                <tr>
-                                    <td> {{$row->user->firstname}} {{$row->user->lastname}} </td>
-                                    <td>{{$row->name}}</td>
-                                    <td>{{$row->updated_at}}</td>
-                                </tr>
-                                @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
                         COMPLETED
                     </div>
                     <div class="card-body">
@@ -151,6 +127,40 @@
                                 @foreach($completed as $row)
                                 <tr>
                                     <td>{{$row->user->firstname}} {{$row->user->lastname}}</td>
+                                    <td>{{$row->name}}</td>
+                                    <td>{{$row->updated_at}}</td>
+                                </tr>
+                                @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        IN PROGRESS
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead class="bg-warning">
+                                <tr>
+                                    <th>Assigned To</th>
+                                    <th>Task</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(count($onprogress) == 0)
+                                <span class="d-flex justify-content-center bg-danger">
+                                    No On Going Tasks
+                                </span>
+                                @endif
+                                @if(count($onprogress) != 0)
+                                @foreach($onprogress as $row)
+                                <tr>
+                                    <td> {{$row->user->firstname}} {{$row->user->lastname}} </td>
                                     <td>{{$row->name}}</td>
                                     <td>{{$row->updated_at}}</td>
                                 </tr>

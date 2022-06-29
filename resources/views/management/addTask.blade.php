@@ -16,7 +16,7 @@
                         @if(Auth::user()->role == 'manager')
                         <li class="breadcrumb-item"><a href="#">Manager</a></li>
                         @endif
-                        <li class="breadcrumb-item active">Add Account</li>
+                        <li class="breadcrumb-item active">Add Task</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -32,26 +32,27 @@
                     <div class="card-body">
                         <form class="form" action="{{route ('storeTask')}}" method="post">
                             @csrf
-                            @if(Auth::User()->role=='employee')
-                            <input type="text" value="{{ Auth::User()->id }}" name="employee" hidden>
-                            <div class="form-check">
+                            
+                            <div id="isVisibleDiv" @if(Auth::User()->role!='employee') style="display: none" @endif class="form-check">
                                 <input name="is_visible" class="form-check-input" type="checkbox" value="1" checked>
                                 <label>
                                   Is Visible?
                                 </label>
                               </div>
+                            @if(Auth::User()->role=='employee')
+                            <input type="text" value="{{ Auth::User()->id }}" name="employee" hidden>
                             @else
                             <div class="employee-textbox" id="company-dropdown">
                                 <label for="employee">Task for</label>
-                                <select class="form-control company-dropdown @error('employee') is-invalid @enderror" name="employee" value="{{old('employee')}}" id="exampleFormControlSelect1">
+                                <select id="employeeSelect" class="form-control company-dropdown @error('employee') is-invalid @enderror" name="employee" value="{{old('employee')}}" id="exampleFormControlSelect1">
                                     <option disabled selected>--Select Employee--</option>
                                     @foreach($employee as $row)
                                     <option value="{{$row->user->id}}"> {{$row->user->firstname}} {{$row->user->lastname}} </option>
                                     @endforeach
                                 </select>
                                 @error('employee')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             @endif
                             <div class="employee-textbox">
@@ -110,4 +111,19 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    var userId =  '{{ Auth::User()->id }}'
+    $('#employeeSelect').on('change', function(){
+        if($(this).val()==userId) {
+            $('#isVisibleDiv').show()
+            $('#isVisibleDiv').prop('disabled', false)
+        } else {
+            $('#isVisibleDiv').hide()
+            $('#isVisibleDiv').prop('disabled', true)
+        }
+    })
+</script>
 @endsection

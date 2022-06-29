@@ -79,14 +79,14 @@
                                         <div class="row">
                                             <div class="col">
                                                 <label for="date_ordered">Date Ordered </label>
-                                                <input class="form-control @error('date_ordered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_ordered)) : ''}}" name="date_ordered">
+                                                <input min="{{ Carbon\Carbon::now()->subYear()->toDateString() }}" class="form-control @error('date_ordered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_ordered)) : ''}}" name="date_ordered">
                                                 @error('date_ordered')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
                                             <div class="col">
                                                 <label for="date_delivered">Date Delivered </label>
-                                                <input class="form-control @error('date_delivered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_delivered)) : ''}}" name="date_delivered">
+                                                <input min="{{ Carbon\Carbon::now()->subYear()->toDateString() }}" class="form-control @error('date_delivered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_delivered)) : ''}}" name="date_delivered">
                                             </div>
                                         </div>
                                     </div>

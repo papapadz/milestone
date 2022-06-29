@@ -304,7 +304,7 @@ class ManagementController extends Controller
                 $newQuantity = $quantityLeft/1000;
                 $newUnit = 'tons';
             } else if($quantityLeft>=50) {
-                $newQuantity = $quantityLeft/1000;
+                $newQuantity = $quantityLeft/50;
                 $newUnit = 'sacks';
             } else 
                 $newQuantity = $quantityLeft;
@@ -335,11 +335,13 @@ class ManagementController extends Controller
 
                 $employees = Employee::where('company_id',$product->company_id)->get();
                 foreach($employees as $employee) {
-                    \Mail::to($employee->user->email)->send(new NotifyMail($details));
-                    Notification::create([
-                        'receiver_id' => $employee->user_id,
-                        'message' => $details['message']
-                    ]);
+                    if($employee->user->role == 'ceo' || $employee->user->role == 'manager') {
+                        \Mail::to($employee->user->email)->send(new NotifyMail($details));
+                        Notification::create([
+                            'receiver_id' => $employee->user_id,
+                            'message' => $details['message']
+                        ]);
+                    }
                 }
             }
             
@@ -916,7 +918,7 @@ class ManagementController extends Controller
            $supplier->name = $request->name;
            $supplier->email = $request->email;
            $supplier->address = $request->address;
-           if(Auth::user()->role!='ceo')
+           if(Auth::user()->role!='employee')
            $supplier->active = $request->active;
            
            $supplier->save();

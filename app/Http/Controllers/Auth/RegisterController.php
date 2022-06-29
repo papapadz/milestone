@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Company;
+use Illuminate\Support\Str;
+use App\Mail\NotifyMail;
 
 class RegisterController extends Controller
 {
@@ -47,12 +51,24 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
+
+    public function showRegistrationForm() {
+
+        return view('auth.register')->with('company',Company::orderBy('name')->get());
+    }
+
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'role' => 'required',
+            'email' => 'email|required|unique:users',
+            'company' => 'required',
+            'age' => 'required|numeric|min:18',
+            'contact_no' => 'required|min:11',
+            'address' => 'required',
+            'gender' => 'required',
         ]);
     }
 
@@ -64,10 +80,32 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $autoPassword = Str::random(6);
+        $user = new User;
+        $user->firstname = $data['firstname'];
+        $user->lastname = $data['lastname'];
+        $user->email = $data['email'];
+        $user->role = $data['role'];
+        $user->password = app('hash')->make($autoPassword);
+        $user->save();
+
+        $employee = new Employee;
+        $employee->user_id = $user->id;
+        $employee->company_id = $data['company'];
+        $employee->age = $data['age'];
+        $employee->contact_no = $data['contact_no'];
+        $employee->address = $data['address'];
+        $employee->position = $user->role;
+        $employee->gender = $data['gender'];
+        $employee->save();
+
+        $details = [
+            'title' => 'Registration Success',
+            'message' => 'Thank you for registering your account, please login using your registered email address '.$user->email.' and this password '.$autoPassword.' .'
+        ];
+
+        \Mail::to($user->email)->send(new NotifyMail($details));
+        
+        return $user;
     }
 }
