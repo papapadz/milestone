@@ -77,7 +77,7 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::get('product/to-mill/{id}', [ManagementController::class, 'toMillUpdate'])->name('toMillUpdate');
     Route::post('product/to-mill/{id}', [ManagementController::class, 'toMillUpdate'])->name('toMillUpdate');
     Route::get('/viewpdf',[PDFController::class,'getAllPalay']);
-    Route::get('/download-pdf',[PDFController::class,'downloadPDF']);
+    Route::get('/download-pdf',[PDFController::class,'downloadPDF'])->name('download-pdf');
 
     //task
     Route::get('add-task', [ManagementController::class, 'addTask'])->name('addTask');

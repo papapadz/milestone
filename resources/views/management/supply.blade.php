@@ -34,7 +34,7 @@
                         <a href="{{ route('addPalay') }}" class="mr-2 btn btn-sm btn-warning float-right">
                             <i class="nav-icon fa-solid fas fa-plus"></i> Add new product
                         </a>
-                        <a href="/download-pdf" class="mr-2 btn btn-sm btn-warning float-right">
+                        <a href="{{ route('download-pdf') }}" class="mr-2 btn btn-sm btn-warning float-right">
                             <i class="nav-icon fa-solid fas fa fa-arrow-circle-down"></i> Export as PDF
                         </a>
                     </div>

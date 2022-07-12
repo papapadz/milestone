@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\ToMill;
 use App\Models\Rice;
 use App\Models\Darak;
-use PDF;
+use \Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class PDFController extends Controller
 {
@@ -27,7 +27,7 @@ class PDFController extends Controller
         $rice = Rice::all();
         $darak = Darak::all();
         $pdf = PDF::loadview('pdf',compact('products', 'mill', 'rice', 'darak'));
-        return $pdf->download('product-reports.pdf');
+        return $pdf->stream('product-reports.pdf');
     }
 
 }
