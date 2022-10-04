@@ -11,10 +11,10 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                             @endif
                         <li class="breadcrumb-item active">Task</li>
                     </ol>
@@ -28,9 +28,6 @@
                 <div class="card">
                     <div class="card-header">
                         Notifications
-                        <a href="{{ route('addTask') }}" class="mr-2 btn btn-sm btn-warning float-right">
-                            <i class="nav-icon fa-solid fas fa-plus"></i>
-                        </a>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">

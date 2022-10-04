@@ -19,13 +19,13 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'admin')
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Admin</a></li>
                         @endif
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                         @endif
                         <li class="breadcrumb-item active">Add Employee</li>
                     </ol>
@@ -142,9 +142,9 @@
                                         <option disabled selected>--Select Gender--</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
-                                        <option value="gay">Gay</option>
+                                        <!-- <option value="gay">Gay</option>
                                         <option value="lesbian">Lesbian</option>
-                                        <option value="bixesual">Bisexual</option>
+                                        <option value="bixesual">Bisexual</option> -->
                                         <option value="NA">Choose not to disclose</option>
                                     </select>
                                     @error('gender')

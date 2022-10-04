@@ -27,10 +27,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars text-red"></i></a>
+        <a class="nav-link" data-widget="pushmenu" href="{{ route('dashboard') }}" role="button"><i class="fas fa-bars text-red"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="{{ route('dashboard') }}" class="nav-link text-red">Home</a>
+        <a href="{{ route('dashboard') }}" class="nav-link text-red"><i class="fa fa-home"></i></a>
       </li>
     </ul>
   </nav>
@@ -38,8 +38,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-light-dark elevation-5" style="background-color:#EFEFD0">
     <!-- Brand Logo -->
-    <a href="#" class="brand-link">
-      <img src="{{asset('images/Logo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+    <a href="{{ route('dashboard') }}" class="brand-link">
+      <img src="{{asset('images/Logo.png')}}" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light text-red"> <strong>Milestone</strong> </span>
     </a>
 
@@ -48,7 +48,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
+          <img src="{{asset('assets/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2">
         </div>
         @php
             if(session()->has('admin'))
@@ -70,22 +70,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
               $employee = session()->get('employee')
         @endphp
         <div class="info">
-          <a href="#" class="d-block text-dark">
-            @if(isset($ceo))
-              {{$ceo['firstname'] .' '. $ceo['lastname']}}
-            @elseif(isset($manager))
-              {{$manager['firstname'] .' '. $manager['lastname']}}
-            @elseif(isset($employee))
-              {{$employee['firstname'] .' '. $employee['lastname']}}
-            @else
+          <a href="{{ route('dashboard') }}" class="d-block text-dark">
+            @if(Auth::user()->role == 'admin')
               Admin
+            @else
+              {{Auth::user()->firstname}} {{Auth::user()->lastname}}
             @endif
           </a>
         </div>
       </div>
 
       <!-- SidebarSearch Form -->
-      <div class="form-inline">
+      {{-- <div class="form-inline">
         <div class="input-group" data-widget="sidebar-search">
           <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
           <div class="input-group-append">
@@ -94,7 +90,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </button>
           </div>
         </div>
-      </div>
+      </div> --}}
 
       <!-- Sidebar Menu -->
       <nav class="mt-2">
@@ -215,15 +211,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <p>Milled Products</p>
                         </a>
                       </li>
-                      <li class="nav-item">
-                        <a href="{{ route('suppliers') }}" class="nav-link {{request()->is('suppliers') || Request::url() === url('add-supplier')? 'active' : '' }}">
-                          <i class="far fa-circle nav-icon"></i>
-                          <p>Suppliers</p>
-                        </a>
-                      </li>
+                    </ul>
                         @endif
             <li class="nav-item menu-open">
-              <ul class="nav nav-treeview">
+              <ul class="nav">
                 <li class="nav-item">
                   <a href="{{ route('manageAccount') }}" class="nav-link  @if(Request::url() === url('manage-account')) active @endif">
                     <i class="nav-icon fa-solid fas fa-user-cog text-red"></i>
@@ -233,7 +224,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </ul>
             </li>
             <li class="nav-item menu-open">
-              <ul class="nav nav-treeview">
+              <ul class="nav">
                 <li class="nav-item">
                   <a href="{{ route('notifications') }}" class="nav-link  @if(Request::url() === url('notifications')) active @endif">
                     <i class="nav-icon fa-solid fas fa-bell text-red"></i>
@@ -300,7 +291,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </div>
       </div>
       <div class="footer-copyright text-center py-3 w-100">© 2022 Copyright:
-          <a href="https://mdbootstrap.com/"> Milestone</a>. <span>All Rights Reserved</span>
+          <a href="{{ url('/') }}"> Milestone</a>. <span>All Rights Reserved</span>
       </div>
   </footer>
 

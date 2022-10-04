@@ -153,7 +153,7 @@ class ManagementController extends Controller
     {
         $user = Auth::user();
         $employee = Employee::where('user_id', $user->id)->first();
-
+        
         if ($request->isMethod('get'))
         {
             $product = Product::where('id', $request->id)->with(['to_mill'])->first();
@@ -167,6 +167,16 @@ class ManagementController extends Controller
 
         }elseif($request->isMethod('post'))
         {
+            $validator = $request->validate([
+                'supplier' => 'required',
+                'variant' => 'required',
+                'quantity' => 'required|numeric|min:1',
+                'unit' => 'required',
+                'date_ordered' => 'required|date',
+                'date_delivered' => 'required|date',
+                'moving' => 'required'
+            ]);
+
             $product = Product::find($request->id);
             $product->name = $request->variant;
             $product->supplier_id = $request->supplier;
@@ -409,25 +419,30 @@ class ManagementController extends Controller
 
     public function storeEmployee(Request $request)
     {
-        $validator = $request->validate([
+
+        $rules = [
             'firstname' => 'required',
             'lastname' => 'required',
             'role' => 'required',
             'email' => 'email|required|unique:users',
             'password' => 'min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
-            'role' => 'required',
-        ],[
-            'password.regex' => 'Password must contain lower (a-z) and uppercase characters (A-Z), numbers (0-9) and special characters (!@#$%^&*())'
-        ]);
+            'role' => 'required'
+        ];
 
         if($request->role!='admin')
-            $validator = $request->validate([
+            $rules = array_merge($rules, [
                 'company' => 'required',
                 'age' => 'required|numeric|min:18',
                 'contact_no' => 'required|min:11',
                 'address' => 'required',
                 'gender' => 'required',
             ]);
+        
+        $validator = $request->validate($rules,[
+            'password.regex' => 'Password must contain lower (a-z) and uppercase characters (A-Z), numbers (0-9) and special characters (!@#$%^&*())'
+        ]);
+
+        
      
         if($request->role == 'ceo') {
             
@@ -502,9 +517,13 @@ class ManagementController extends Controller
         $confirm = $request->confirm;
         $user = Auth::user();
 
+        $validator = $request->validate([
+            'password' => 'required',
+            'new' => 'required|min:6',
+            'confirm' => 'required|min:6',
+        ]);
         if(Hash::check($current, $user->password)){
             //they match
-
             if($new == $confirm){
                 $validator = $request->validate([
                     'new' => 'min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
@@ -524,7 +543,7 @@ class ManagementController extends Controller
             }
 
         } else  {
-            Alert::Error('Success!', 'Password is Incorrect');
+            Alert::Error('Warning!', 'Password is Incorrect');
             return redirect()->back();
         }
 

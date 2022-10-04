@@ -11,13 +11,13 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                         @endif
                             @if(Auth::user()->role == 'employee')
-                                <li class="breadcrumb-item"><a href="#">Employee</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Employee</a></li>
                             @endif
                         <li class="breadcrumb-item active">Add Account</li>
                     </ol>
@@ -87,6 +87,9 @@
                                             <div class="col">
                                                 <label for="date_delivered">Date Delivered </label>
                                                 <input min="{{ Carbon\Carbon::now()->subYear()->toDateString() }}" class="form-control @error('date_delivered') is-invalid @enderror" placeholder="mm/dd/yyyy" type="date" value="{{isset($product) ? date('Y-m-d', strtotime($product->date_delivered)) : ''}}" name="date_delivered">
+                                                @error('date_delivered')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
                                             </div>
                                         </div>
                                     </div>

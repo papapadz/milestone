@@ -10,7 +10,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Admin</a></li>
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
                 </div><!-- /.col -->
@@ -25,7 +25,7 @@
                         ALL ACCOUNTS
                         <button class="btn btn-sm btn-warning float-right">
                             <a href="{{ route('addAccount') }}">
-                                <i class="nav-icon fa-solid fas fa-plus text-dark"></i>
+                                <i class="nav-icon fa-solid fas fa-plus text-dark"></i> <span class="text-dark">Add Company</span>
                             </a>
                         </button>
 
@@ -62,14 +62,14 @@
                                             @if($row->active == 1)
                                             <td>
                                                 <a class="btn btn-danger" href="{{url('update-account/'.$row->id)}}">
-                                                    Unsubscribe
+                                                    <i class="fa fa-ban"></i> Unsubscribe
                                                 </a>
                                             </td>
                                             @endif
                                             @if($row->active == 0)
                                             <td>
                                                 <a class="btn btn-success" href="{{url('update-account/'.$row->id)}}">
-                                                    Subscribe
+                                                    <i class="fa fa-check"></i> Subscribe
                                                 </a>
                                             </td>
                                             @endif
@@ -89,6 +89,18 @@
                                         <select class="form-control" name="flag" id="formFlag">
                                             <option @if($headers['flag']==1) selected @endif value="1">Running Palay Inventory per Variant (in KG)</option>
                                             <option @if($headers['flag']==2) selected @endif value="2">Milled Rice and Darak (in KG)</option>
+                                            <option @if($headers['flag']==3) selected @endif value="3">Task Management</option>
+                                            <option @if($headers['flag']==4) selected @endif value="4">Employee Management</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-12">
+                                    <div class="form-inline">
+                                        <label id="variantLabel" class="mr-2"><span id="variantSpan">Filter Variant</span></label> 
+                                        <select class="form-control" name="variant" id="formVariant">
+                                            <option @if($headers['variant']==0) selected @endif value=0>All</option>
                                         </select>
                                     </div>
                                 </div>
@@ -116,11 +128,54 @@
 @section('scripts')
 <script>
     var flag =" {{ $headers['flag'] }}"
+    var variant =" {{ $headers['variant'] }}"
     var dateFrom = "{{ $headers['datefrom'] ?? Carbon\Carbon::now()->toDateString() }}"
     var dateTo = "{{ $headers['dateto'] ?? Carbon\Carbon::now()->toDateString() }}"
     const chart = new Chartisan({
         el: '#chart',
-        url: "@chart('simple_chart')"+"?flag="+flag+"&datefrom="+dateFrom+'&dateto='+dateTo
+        url: "@chart('simple_chart')"+"?flag="+flag+"&variant="+variant+"&datefrom="+dateFrom+'&dateto='+dateTo
     })
-    </script>
+    
+    $(document).ready(function() {
+        loadFilter($('#formFlag').val())
+    })
+
+    $('#formFlag').on('change', function() {
+        loadFilter($(this).val())
+    })
+
+    function loadFilter(x) {
+        var field = 'variant'
+        switch(x) {
+            case "0": case "1": case "2":
+                $('#variantSpan').remove()
+                $('#variantLabel').append('<span id="variantSpan">Filter Variant</span>')
+            break
+            case "3": case "4": 
+                field = 'name'
+                $('#variantSpan').remove()
+                $('#variantLabel').append('<span id="variantSpan">Filter Company</span>')
+            break
+        }
+        fetchData(x,field)
+    }
+
+    function fetchData(x, field) {
+        $.ajax({
+            url: "{{ route('filter') }}",
+            data: {'flag':x}
+        }).done(function(response) {
+           
+            $('option.variantOptions').remove()
+            for(let i=0; i<response.length; i++) {
+                console.log(variant,response[i]['id'])
+                if(variant==response[i]['id'])
+                    $('#formVariant').append('<option selected class="variantOptions" value='+response[i]['id']+'>'+response[i][field]+'</option>')
+                else
+                    $('#formVariant').append('<option class="variantOptions" value='+response[i]['id']+'>'+response[i][field]+'</option>')
+            }
+                
+        });
+    }
+</script>
 @endsection

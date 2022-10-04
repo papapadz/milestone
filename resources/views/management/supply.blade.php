@@ -11,10 +11,10 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                         @endif
                         <li class="breadcrumb-item active">Supply</li>
                     </ol>
@@ -28,15 +28,17 @@
                 <div class="card">
                     <div class="card-header">
                         PALAY INVENTORY
-                        <a href="{{ route('viewPalay') }}" class="btn btn-sm btn-warning float-right">
+                        <a href="{{ route('viewPalay') }}" class="btn btn-sm btn-info float-right">
                             <i class="nav-icon fa-solid fas fa-eye"></i> View all product
                         </a>
                         <a href="{{ route('addPalay') }}" class="mr-2 btn btn-sm btn-warning float-right">
                             <i class="nav-icon fa-solid fas fa-plus"></i> Add new product
                         </a>
-                        <a href="{{ route('download-pdf') }}" class="mr-2 btn btn-sm btn-warning float-right">
+                        @if(Auth::user()->role!='employee')
+                        <a href="{{ route('download-pdf') }}" class="mr-2 btn btn-sm btn-success float-right">
                             <i class="nav-icon fa-solid fas fa fa-arrow-circle-down"></i> Export as PDF
                         </a>
+                        @endif
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">

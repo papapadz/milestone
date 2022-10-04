@@ -15,7 +15,7 @@
             <div class="container pt-3">
                 <div class="blog px-5 mx-5">
                     <h1>Track your Inventory and Manage your Team</h1>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p style="text-align:center">Hassle-free and uncomplicated inventory and task management application  to kickstart  your business advancement. Make us part of your first milestone. Book a discovery call now!</p>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
                         </div>
                         <div class="col-2">
                             <h1>About us</h1>
-                            <small>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</small>
+                            <small>We’re Milestone — a group of innovators that celebrates your first Milestone in embracing technology. Empowering you to engage and welcome development. SO LET US BECOME YOUR FIRST MILESTONE.</small>
                         </div>
                     </div>
                 </div>

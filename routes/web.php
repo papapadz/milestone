@@ -20,6 +20,13 @@ use App\Http\Controllers\PDFController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// $app_url = config("app.url");
+// if (!empty($app_url)) {
+//     URL::forceRootUrl($app_url);
+//     $schema = explode(':', $app_url)[0];
+//     URL::forceScheme($schema);
+// }
+
 
 Route::get('/', function () {
     return view('landing');
@@ -33,8 +40,9 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     | HomeController
     |--------------------------------------------------------------------------
     */
-
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
+
+    Route::get('/filter', [App\Http\Controllers\HomeController::class, 'filter'])->name('filter')->middleware('roleAdmin');
     /*
     |--------------------------------------------------------------------------
     | ManagementController
@@ -44,10 +52,10 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::get('task', [ManagementController::class, 'task'])->name('task');
 
     //add user / add employee
-    Route::get('add-employee', [ManagementController::class, 'addEmployee'])->name('addEmployee');
-    Route::post('store-employee', [ManagementController::class, 'storeEmployee'])->name('storeEmployee');
-    Route::get('add-user', [ManagementController::class, 'addUser'])->name('addUser');
-    Route::get('user-lists', [UserController::class, 'userLists'])->name('userLists');
+    Route::get('add-employee', [ManagementController::class, 'addEmployee'])->name('addEmployee')->middleware('roleCEOManager');
+    Route::post('store-employee', [ManagementController::class, 'storeEmployee'])->name('storeEmployee')->middleware('roleCEOManager');
+    Route::get('add-user', [ManagementController::class, 'addUser'])->name('addUser')->middleware('roleCEOManager');
+    Route::get('user-lists', [UserController::class, 'userLists'])->name('userLists')->middleware('roleAdmin');
 
     // change password
     Route::get('manage-account', [ManagementController::class, 'manageAccount'])->name('manageAccount');
@@ -57,18 +65,18 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::get('employee-directory', [ManagementController::class, 'employeeDirectory'])->name('employeeDirectory');
 
     // company
-    Route::get('add-account', [ManagementController::class, 'addAccount'])->name('addAccount');
-    Route::post('store-account', [ManagementController::class, 'storeAccount'])->name('storeAccount');
-    Route::get('update-account/{id}', [ManagementController::class, 'updateAccount'])->name('updateAccount');
+    Route::get('add-account', [ManagementController::class, 'addAccount'])->name('addAccount')->middleware('roleAdmin');
+    Route::post('store-account', [ManagementController::class, 'storeAccount'])->name('storeAccount')->middleware('roleAdmin');
+    Route::get('update-account/{id}', [ManagementController::class, 'updateAccount'])->name('updateAccount')->middleware('roleAdmin');
 
     // supply
     Route::get('supply', [ManagementController::class, 'supply'])->name('supply');
     Route::get('supply/milled', [ManagementController::class, 'supplyMilled'])->name('supply-milled');
-    Route::get('suppliers', [ManagementController::class, 'suppliers'])->name('suppliers');
-    Route::get('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier');
-    Route::post('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier');
-    Route::get('add-supplier', [ManagementController::class, 'addNewSupplier'])->name('addNewSupplier');
-    Route::post('add-supplier', [ManagementController::class, 'addNewSupplier'])->name('addNewSupplier');
+    Route::get('suppliers', [ManagementController::class, 'suppliers'])->name('suppliers')->middleware('roleCEOManager');
+    Route::get('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier')->middleware('roleCEOManager');
+    Route::post('edit-supplier/{id}', [ManagementController::class, 'editSupplier'])->name('editSupplier')->middleware('roleCEOManager');
+    Route::get('add-supplier', [ManagementController::class, 'addNewSupplier'])->name('addNewSupplier')->middleware('roleCEOManager');
+    Route::post('add-supplier', [ManagementController::class, 'addNewSupplier'])->name('addNewSupplier')->middleware('roleCEOManager');
     Route::get('add-palay', [ManagementController::class, 'addPalay'])->name('addPalay');
     Route::get('product/{id}/edit', [ManagementController::class, 'updateProduct'])->name('updateProduct');
     Route::post('product/{id}/edit', [ManagementController::class, 'updateProduct'])->name('updateProduct');
@@ -77,7 +85,7 @@ Route::middleware(['auth','preventBackHistory','verified'])->group(function() {
     Route::get('product/to-mill/{id}', [ManagementController::class, 'toMillUpdate'])->name('toMillUpdate');
     Route::post('product/to-mill/{id}', [ManagementController::class, 'toMillUpdate'])->name('toMillUpdate');
     Route::get('/viewpdf',[PDFController::class,'getAllPalay']);
-    Route::get('/download-pdf',[PDFController::class,'downloadPDF'])->name('download-pdf');
+    Route::get('/download-pdf',[PDFController::class,'downloadPDF'])->name('download-pdf')->middleware('roleCEOManager');
 
     //task
     Route::get('add-task', [ManagementController::class, 'addTask'])->name('addTask');

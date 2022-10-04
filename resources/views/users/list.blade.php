@@ -1,9 +1,9 @@
 @extends('layouts.nav')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="content-header">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row mb-2">
                 @if((Auth::user()->role == 'ceo')||(Auth::user()->role == 'manager'))
                 <div class="col-sm-6">
@@ -19,13 +19,13 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'admin')
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Admin</a></li>
                         @endif
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                         @endif
                         <li class="breadcrumb-item active">Add Employee</li>
                     </ol>
@@ -34,16 +34,17 @@
         </div>
     </div>
     <!-- content-header -->
-    <div class="container-fluid">
+    <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     Active user lists
                     @if(Auth::user()->role == 'admin')
-                        <a href="{{route('addUser')}}" class="btn btn-primary btn-sm float-right">Add new user</a>
+
+                        <a href="{{route('addUser')}}" class="btn btn-warning btn-sm float-right"><i class="fa fa-plus"></i> Add new user</a>
                     @elseif(Auth::user()->role == 'ceo' || Auth::user()->role == 'manager')
-                        <a href="{{route('addUser')}}" class="btn btn-primary btn-sm float-right">Add employee</a>
+                        <a href="{{route('addUser')}}" class="btn btn-warning btn-sm float-right"><i class="fa fa-plus"></i> Add employee</a>
                     @endif
                 </div>
                 <div class="card-body">

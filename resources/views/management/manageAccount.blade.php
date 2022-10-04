@@ -11,13 +11,13 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
                         @endif
                         @if(Auth::user()->role == 'manager')
-                        <li class="breadcrumb-item"><a href="#">Manager</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Manager</a></li>
                         @endif
                         @if(Auth::user()->role == 'employee')
-                        <li class="breadcrumb-item"><a href="#">Employee</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Employee</a></li>
                         @endif
                         <li class="breadcrumb-item active">Manage Account</li>
                     </ol>
@@ -39,7 +39,8 @@
                             @csrf
                             <div class="employee-textbox">
                                 <label for="current">Current Password</label>
-                                <input class="form-control" placeholder="Current Password" type="password" name="current" value="{{old('current')}}">
+                                <input class="form-control @error('password') is-invalid @enderror" placeholder="Current Password" type="password" name="current">
+                                @error('password') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <div class="employee-textbox">
                                 <label for="new">New Password</label>
@@ -48,7 +49,8 @@
                             </div>
                             <div class="employee-textbox">
                                 <label for="confirm">Confirm New Password</label>
-                                <input class="form-control @error('new') is-invalid @enderror" placeholder="Confirm New Password" type="password" name="confirm" value="{{old('confirm')}}">
+                                <input class="form-control @error('confirm') is-invalid @enderror" placeholder="Confirm New Password" type="password" name="confirm">
+                                @error('confirm') <span class="text-danger">{{ $message }}</span> @enderror
                             </div>
                             <br>
                             <div class="employee-textbox">

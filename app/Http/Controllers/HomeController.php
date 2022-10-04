@@ -9,6 +9,7 @@ use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\PalayVariant;
 use DB;
 
 class HomeController extends Controller
@@ -57,7 +58,8 @@ class HomeController extends Controller
         $headers = [
             'datefrom' => Carbon::now()->toDateString(),
             'dateto' => Carbon::now()->toDateString(),
-            'flag' => 1
+            'flag' => 1,
+            'variant' => "0"
         ];
         if(Auth::user()->role == 'admin'){
             
@@ -65,12 +67,13 @@ class HomeController extends Controller
                 $headers['datefrom'] = $request->datefrom;
                 $headers['dateto'] = $request->dateto;
                 $headers['flag'] = $request->flag;
+                $headers['variant'] = strval($request->variant);
             }
             $company = Company::get();
 
             return view('users.admin.dashboard', [
                 'company' => $company,
-                'headers' => $headers
+                'headers' => $headers,
             ]);
         }
         if(Auth::user()->role == 'ceo'){
@@ -107,6 +110,15 @@ class HomeController extends Controller
                 'task' =>  $task,
                 'headers' => $headers
             ]);
+        }
+    }
+
+    public function filter(Request $request) {
+        switch($request->flag) {
+            case 1: case 2:
+                return PalayVariant::select('id','variant')->get();
+            case 3: case 4:
+                return Company::select('id','name')->get();
         }
     }
 }

@@ -12,7 +12,7 @@
 <div class="container mt-5">
     <h2 class="text-center mb-md-5">PALAY INVENTORY</h2>
     <h4 class="text-center">as of {{ Carbon\Carbon::now()->toFormattedDateString() }}</h2>
-    <table class="table table-bordered mb-5">
+    <table class="table-bordered mb-md-5">
         <thead>
         <tr>
             <th>ID</th>
@@ -25,6 +25,8 @@
             <th>Moving</th>
         </tr>
         </thead>
+        
+        
         <tbody>
         @foreach($products as $prod)
             <tr>
