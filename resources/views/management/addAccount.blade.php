@@ -11,7 +11,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         @if(Auth::user()->role == 'ceo')
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">CEO</a></li>
+                        <li class="breadcrumb-item"><a href="#">CEO</a></li>
                         @endif
                         <li class="breadcrumb-item active">Add Account</li>
                     </ol>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "147d7b91427fb218618c611d3d2120c1",
+    "content-hash": "cc661265bf4905721905eb281c5a4e26",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1786,6 +1786,67 @@
                 }
             ],
             "time": "2021-11-21T11:48:40+00:00"
+        },
+        {
+            "name": "magros/laravel-model-encryption",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magros/laravel-model-encryption.git",
+                "reference": "5f6fe53e5ded144291da06e61edd2d8287706450"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magros/laravel-model-encryption/zipball/5f6fe53e5ded144291da06e61edd2d8287706450",
+                "reference": "5f6fe53e5ded144291da06e61edd2d8287706450",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "illuminate/database": "*",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "laravel/legacy-factories": "^1.1",
+                "mockery/mockery": "1.3.1",
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Magros\\Encryptable\\EncryptServiceProvider"
+                    ],
+                    "dont-discover": [
+                        "*"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Magros\\Encryptable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Antonio Godinez",
+                    "email": "iron-rocks@hotmail.com"
+                }
+            ],
+            "description": "A trait to encrypt data models in Laravel, automatically encrypt and decrypt model data overriding getAttribute an setAttribute methods of Eloquent Model.",
+            "keywords": [
+                "eloquent",
+                "encrypt",
+                "laravel",
+                "laravel 5",
+                "model"
+            ],
+            "time": "2021-01-30T21:22:46+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -8117,7 +8178,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "magros/laravel-model-encryption": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

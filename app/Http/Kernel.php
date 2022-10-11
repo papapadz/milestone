@@ -65,9 +65,5 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'preventBackHistory' => \App\Http\Middleware\PreventBackHistory::class,
-        'roleAdmin' => \App\Http\Middleware\RoleAdmin::class,
-        'roleCEO' => \App\Http\Middleware\RoleCEO::class,
-        'roleManager' => \App\Http\Middleware\RoleManager::class,
-        'roleCEOManager' => \App\Http\Middleware\RoleCEOManager::class
     ];
 }

@@ -63,7 +63,7 @@ class RegisterController extends Controller
             'firstname' => 'required',
             'lastname' => 'required',
             'role' => 'required',
-            'email' => 'email|required|unique:users',
+            'email' => 'email|required|unique_encrypted:users,email',
             'company' => 'required',
             'age' => 'required|numeric|min:18',
             'contact_no' => 'required|min:11',

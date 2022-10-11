@@ -163,6 +163,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        \Magros\Encryptable\EncryptServiceProvider::class,
 
         /*
          * Package Service Providers...
