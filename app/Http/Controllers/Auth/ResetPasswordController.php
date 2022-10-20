@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
     {
         return [
             'token' => 'required',
-            'email' => 'email|required|exists:users',
+            'email' => 'email|required|exists_encrypted:users,email',
             'password' => 'required|confirmed|min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
         ];
     }

@@ -8,21 +8,28 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Magros\Encryptable\Encryptable;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Encryptable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+    protected $encryptable = [ 'email', 'firstname' , 'lastname'];
+
     protected $fillable = [
-        'name',
         'email',
+        'firstname',
+        'lastname',
+        'email_verified_at',
         'password',
-        'login_attempt'
+        'role',
+        'login_attempt',
+        'remember_token'
     ];
 
     /**

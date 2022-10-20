@@ -424,7 +424,7 @@ class ManagementController extends Controller
             'firstname' => 'required',
             'lastname' => 'required',
             'role' => 'required',
-            'email' => 'email|required|unique:users',
+            'email' => 'email|required|unique_encrypted:users,email',
             'password' => 'min:6|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!@#$%^&*()]).*$/',
             'role' => 'required'
         ];
